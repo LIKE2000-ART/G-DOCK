@@ -1,5 +1,5 @@
 #!/bin/bash
-# AutoBuild Module by Hyy2001 <https://github.com/Hyy2001X/AutoBuild-Actions>
+# AutoBuild Module by Hyy2001 <https://github.com/Hyy2001X/AutoBuild-Actions-BETA>
 # AutoBuild Functions
 
 Firmware_Diy_Before() {
@@ -83,7 +83,7 @@ Firmware_Diy_Before() {
 			TARGET_FLAG="${Default_Flag}"
 		fi
 	fi
-	if [[ ! ${Tempoary_FLAG} =~ (\"|=|-|_|\.|\#|\|) && ${Tempoary_FLAG} =~ [a-zA-Z0-9] ]]
+	if [[ ! ${Tempoary_FLAG} =~ (\"|=|-|_|\.|\#|\|) && ${Tempoary_FLAG} =~ [a-zA-Z0-9] && ${Tempoary_FLAG} != AUTO ]]
 	then
 		TARGET_FLAG="${Tempoary_FLAG}"
 	fi
@@ -286,6 +286,7 @@ EOF
 
 Firmware_Diy_End() {
 	ECHO "[Firmware_Diy_End] Starting ..."
+	ECHO "[$(date "+%H:%M:%S")] Actions Avaliable: $(df -h | grep "/dev/root" | awk '{printf $4}')"
 	cd ${WORK}
 	MKDIR ${WORK}/bin/Firmware
 	Fw_Path="${WORK}/bin/targets/${TARGET_BOARD}/${TARGET_SUBTARGET}"
@@ -312,9 +313,8 @@ Firmware_Diy_End() {
 	if [[ $(ls) =~ 'AutoBuild-' ]]
 	then
 		cd -
-		cp -a ${Fw_Path}/AutoBuild-* bin/Firmware
+		mv -f ${Fw_Path}/AutoBuild-* bin/Firmware
 	fi
-	ECHO "[$(date "+%H:%M:%S")] Actions Avaliable: $(df -h | grep "/dev/root" | awk '{printf $4}')"
 	ECHO "[Firmware_Diy_End] Done"
 }
 
@@ -340,8 +340,8 @@ Process_Fw_Core() {
 		Fw=${Fw/FORMAT/${Fw_Format}}
 		if [[ -f $1 ]]
 		then
-			ECHO "Copying [$1] to [${Fw}] ..."
-			cp -a $1 ${Fw}
+			ECHO "Moving [$1] to [${Fw}] ..."
+			mv -f $1 ${Fw}
 		else
 			ECHO "Failed to copy [${Fw}] ..."
 		fi
